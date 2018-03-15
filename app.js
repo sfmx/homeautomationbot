@@ -66,3 +66,24 @@ bot.dialog('TurnOnDialog',
 ).triggerAction({
     matches: 'HomeAutomation.TurnOn'
 })
+
+bot.dialog('TurnOffDialog',
+    (session, args) => {
+        // Resolve and store any HomeAutomation.Device entity passed from LUIS.
+        var intent = args.intent;
+        var device = builder.EntityRecognizer.findEntity(intent.entities, 'HomeAutomation.Device');
+
+        // Turn off a specific device if a device entity is detected by LUIS
+        if (device) {
+            session.send('Ok, turning off the %s.', device.entity);
+            // Put your code here for calling the IoT web service that turns off a device
+        } else {
+            // Assuming turning off lights is the default
+            session.send('Ok, turning off the lights');
+            // Put your code here for calling the IoT web service that turns off a device
+        }
+        session.endDialog();
+    }
+).triggerAction({
+    matches: 'HomeAutomation.TurnOff'
+})
