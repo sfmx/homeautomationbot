@@ -33,7 +33,9 @@ var azureTableClient = new botbuilder_azure.AzureTableClient(tableName, process.
 var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azureTableClient);
 
 // Create your bot with a function to receive messages from the user
-var bot = new builder.UniversalBot(connector);
+var bot = new builder.UniversalBot(connector, function (session, args) {
+    session.send('You reached the default message handler. You said \'%s\'.', session.message.text);
+});
 bot.set('storage', tableStorage);
 
 // Make sure you add code to validate these fields
@@ -45,6 +47,9 @@ const LuisModelUrl = 'https://' + luisAPIHostName + '/luis/v1/application?id=' +
 
 // Main dialog with LUIS
 var recognizer = new builder.LuisRecognizer(LuisModelUrl);
+
+// Add the recognizer to the bot
+bot.recognizer(recognizer); 
 
 bot.dialog('TurnOnDialog',
     (session, args) => {
@@ -65,7 +70,7 @@ bot.dialog('TurnOnDialog',
     }
 ).triggerAction({
     matches: 'HomeAutomation.TurnOn'
-})
+});
 
 bot.dialog('TurnOffDialog',
     (session, args) => {
@@ -86,4 +91,4 @@ bot.dialog('TurnOffDialog',
     }
 ).triggerAction({
     matches: 'HomeAutomation.TurnOff'
-})
+});
